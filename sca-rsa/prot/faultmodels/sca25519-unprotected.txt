@@ -1,14 +1,10 @@
 ######################################################################
 # 
 ######################################################################
-Instructions: 1-502731
+Instructions: 1-27658220
     Instruction Pointer:
         Op_codes: ALL
             Lifespan: 0
                 Operation: SKIP
                     Masks: 1,2,3
-    Instruction:
-        Op_codes: ALL
-            Lifespan: 0
-                Operations: xOR
-                    Masks:1<0<32
+    

@@ -4,10 +4,10 @@
     "output directory name" : "sca-rsa/prot/outputs/",
     "threads"               : "16",
     "fault model filename"  : "sca-rsa/prot/faultmodels/sca25519-unprotected.txt",
-    "checkpoints"           : "yes",
+    "checkpoints"           : "no",
     "number of checkpoints" : "1000",
     "equivalents"           : "no",
     "timeit"                : "no",
     "display disassembly"   : "yes",
-    "max instructions"      : "1000000"
+    "max instructions"      : "26000000"
 }   
