@@ -20,9 +20,9 @@
 
     "code offset": "0x0001000",
     "code start":  "0x00001ad",
-    "code end":    "0x00001f0",
-    "fault start": "0x0002a0e",
-    "fault end"  : "0x00001f0",
+    "code end":    "0x00001f2",
+    "fault start": "0x0002a10",
+    "fault end"  : "0x0002be0",
     "set memory" : [],
     "outputs": [
   {
