@@ -1,5 +1,5 @@
 {
-    "binary json filename"  : "sca-rsa/prot/jsons/binary-details.json",
+    "binary json filename"  : "sca-rsa/prot/jsons/binary-details3.json",
     "mode"                  : "stats",
     "timeit"                : "yes",
     "display disassembly"   : "yes"
