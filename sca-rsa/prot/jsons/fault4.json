@@ -1,0 +1,13 @@
+{
+    "binary json filename"  : "sca-rsa/prot/jsons/binary-details4.json",
+    "mode"                  : "fault",
+    "output directory name" : "sca-rsa/prot/outputs4/",
+    "threads"               : "16",
+    "fault model filename"  : "sca-rsa/prot/faultmodels/sca25519-unprotected4.txt",
+    "checkpoints"           : "no",
+    "number of checkpoints" : "1000",
+    "equivalents"           : "no",
+    "timeit"                : "no",
+    "display disassembly"   : "yes",
+    "max instructions"      : "68286121"
+}   

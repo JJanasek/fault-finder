@@ -1,0 +1,46 @@
+{
+    "binary filename" : "sca-rsa/prot/main.elf",
+    "cpu":"CORTEX_M4",
+    "unicorn arch"    :"arm",
+    "unicorn mode"    :"thumb",
+    "capstone arch"   :"arm",
+    "capstone mode"   :"thumb",
+  "memory address": "0x08000000",
+  "memory size":    "0x00100000",
+
+  "other memory": [
+    { "address": "0x20000000", "size": "0x00020000" },
+    { "address": "0x10000000", "size": "0x00010000" },
+    { "address": "0x40000000", "size": "0x00200000" },
+    //{ "address": "0x50000000", "size": "0x01000000" }   // MMIO 0x5000_0000..0x50FF_FFFF
+  ],
+
+   "stack address": "0x08100000",
+   "stack size":  "0x00001000",
+
+    "code offset": "0x0001000",
+    "code start":  "0x00001ad",
+    "code end":    "0x00001f0", 
+    "fault start": "0x000295c",
+    "fault end"  : "0x0002a0e",
+    "set memory" : [],
+    "outputs": [
+  {
+    "location": "address in register",
+    "register": "sp",
+    "length":  "0x80",
+    "offset":  "0x0"
+  }
+
+    ],
+
+    /* (optional) also dump the pointer that was passed to the RSA routine */
+    "set registers": [
+    ],
+    "skips":
+    [
+        
+    ],
+    "timeout":"0",
+    "filter results": "no"
+}   
