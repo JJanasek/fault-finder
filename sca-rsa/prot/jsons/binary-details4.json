@@ -22,7 +22,7 @@
     "code start":  "0x00001ad",
     "code end":    "0x00001f0", 
     "fault start": "0x000295c",
-    "fault end"  : "0x0002a0e",
+    "fault end"  : "0x0002982",
     "set memory" : [],
     "outputs": [
   {
