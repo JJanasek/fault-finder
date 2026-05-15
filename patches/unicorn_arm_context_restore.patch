@@ -1,0 +1,41 @@
+--- a/qemu/target/arm/unicorn_arm.c
++++ b/qemu/target/arm/unicorn_arm.c
+@@ -733,9 +733,38 @@
+     }
+ 
+     p = context->data;
++
++    /* Save the current engine's heap-allocated array pointers before
++     * overwriting env with checkpoint data. The memcpy below copies the raw
++     * CPUARMState from the checkpoint, including pointer values that belonged
++     * to the golden-run engine (now freed/recycled). ARM_ENV_RESTORE must
++     * write checkpoint data into this engine's own allocated buffers. */
++    uint32_t *save_pmsav7_drbar   = env->pmsav7.drbar;
++    uint32_t *save_pmsav7_drsr    = env->pmsav7.drsr;
++    uint32_t *save_pmsav7_dracr   = env->pmsav7.dracr;
++    uint32_t *save_pmsav8_rbar_ns = env->pmsav8.rbar[M_REG_NS];
++    uint32_t *save_pmsav8_rbar_s  = env->pmsav8.rbar[M_REG_S];
++    uint32_t *save_pmsav8_rlar_ns = env->pmsav8.rlar[M_REG_NS];
++    uint32_t *save_pmsav8_rlar_s  = env->pmsav8.rlar[M_REG_S];
++    uint32_t *save_sau_rbar       = env->sau.rbar;
++    uint32_t *save_sau_rlar       = env->sau.rlar;
++
+     memcpy(uc->cpu->env_ptr, p, uc->cpu_context_size);
+     p += uc->cpu_context_size;
+ 
++    /* Restore this engine's own array pointers (overwritten by the memcpy
++     * above with stale checkpoint values) so ARM_ENV_RESTORE copies
++     * checkpoint data into the correct per-engine buffers. */
++    env->pmsav7.drbar        = save_pmsav7_drbar;
++    env->pmsav7.drsr         = save_pmsav7_drsr;
++    env->pmsav7.dracr        = save_pmsav7_dracr;
++    env->pmsav8.rbar[M_REG_NS] = save_pmsav8_rbar_ns;
++    env->pmsav8.rbar[M_REG_S]  = save_pmsav8_rbar_s;
++    env->pmsav8.rlar[M_REG_NS] = save_pmsav8_rlar_ns;
++    env->pmsav8.rlar[M_REG_S]  = save_pmsav8_rlar_s;
++    env->sau.rbar            = save_sau_rbar;
++    env->sau.rlar            = save_sau_rlar;
++
+     nr = cpu->pmsav7_dregion;
+     ARM_ENV_RESTORE(env->pmsav7.drbar)
+     ARM_ENV_RESTORE(env->pmsav7.drsr)

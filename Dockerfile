@@ -17,7 +17,9 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir /root/.ssh/ && ssh-keyscan github.com >> /root/.ssh/known_hosts
 
 # Download, build, and install Unicorn
-RUN git clone --depth 1 --branch 2.1.1 https://github.com/unicorn-engine/unicorn.git && cd unicorn && \
+COPY patches /usr/src/patches
+RUN git clone --depth 1 --branch 2.1.1 https://github.com/unicorn-engine/unicorn.git && \
+    cd unicorn && patch -p1 < /usr/src/patches/unicorn_arm_context_restore.patch && \
     mkdir build && cd build && \
     cmake .. -DCMAKE_BUILD_TYPE=Release && \
     make -j 4 && \
