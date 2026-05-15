@@ -130,6 +130,7 @@
         bool timeit;
         bool display_disassembly;
         bool restart;
+        bool fatal_error;
         bool get_disassembly_from_file;
         uint64_t restart_address;
         uint64_t max_instructions;

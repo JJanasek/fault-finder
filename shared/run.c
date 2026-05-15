@@ -490,7 +490,7 @@ void *fault_it_thread(void *user_data)
         if ((current_run_state.file_fprintf=fopen(pfile, "w")) == NULL)
         {
             fprintf(stderr, "Error opening file descriptor for thread: %s\n", pfile);
-            my_exit(-1);
+            pthread_exit((void *)(intptr_t)-1);
         }
     }
     else
@@ -517,11 +517,14 @@ void *fault_it_thread(void *user_data)
                 fprintf(stderr, "Instruction to fault: %lu is larger than the total number of instructions: %lu !\n",
                     workload.instruction,
                     context->total_instrs );
-                my_exit(-1);
+                fflush(stderr);
+                pthread_exit((void *)(intptr_t)-1);
         }
         if (workload.instruction_range_fault != NULL)
         {
             run_the_actual_fault(context->code_buffer, context->code_buffer_size, workload, &current_run_state);
+            if (current_run_state.fatal_error)
+                pthread_exit((void *)(intptr_t)-1);
         }
     } while (workload.instruction_range_fault != NULL);
 
@@ -669,16 +672,25 @@ void fault_it(current_run_state_t* current_run_state,run_list_t* run_list, uint6
     
     for (int i=0; i < num_threads; i++)
     {
-        fprintf(stdout, "Thread %i created.\n", i);
         send_to_thread[i].context=&context;
         send_to_thread[i].thread_num=i;
-        pthread_create(&thread_ids[i], NULL, fault_it_thread, &send_to_thread[i]);
+        int rc = pthread_create(&thread_ids[i], NULL, fault_it_thread, &send_to_thread[i]);
+        if (rc != 0)
+        {
+            fprintf(stderr, "pthread_create failed for thread %i: %s\n", i, strerror(rc));
+            my_exit(-1);
+        }
+        fprintf(stdout, "Thread %i created.\n", i);
     }
 
     for (int i=0; i < num_threads; i++)
     {
-        pthread_join(thread_ids[i], NULL);
-        fprintf(stdout, "\nThread %i rejoined.", i);
+        void *thread_ret = NULL;
+        pthread_join(thread_ids[i], &thread_ret);
+        if (thread_ret != NULL)
+            fprintf(stderr, "\nThread %i exited with error.", i);
+        else
+            fprintf(stdout, "\nThread %i rejoined.", i);
     }
     printf ("\n");
    // free_checkpoint_details(current_run_state);

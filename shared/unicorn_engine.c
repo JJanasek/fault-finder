@@ -92,13 +92,19 @@ void uc_restore_from_checkpoint(uc_engine *uc, current_run_state_t *current_run_
     if (current_run_state->line_details_array[checkpoint_instr].the_context == NULL)
     {
         fprintf(stderr, "Unable to restore from checkpoint instruction %lu. No checkpoint stored. (Actual instruction: %lu)\n", checkpoint_instr,instr);
-        my_exit(-1);
+        fflush(stderr);
+        current_run_state->fatal_error=true;
+        my_uc_emu_stop(uc);
+        return;
     }
 
     if (current_run_state->line_details_array[checkpoint_instr].checkpoint == false)
     {
         fprintf(stderr, "Checkpoint instruction %lu is reporting itself NOT to be a checkpoint! (Actual instruction: %lu)\n", checkpoint_instr,instr);
-        my_exit(-1);
+        fflush(stderr);
+        current_run_state->fatal_error=true;
+        my_uc_emu_stop(uc);
+        return;
     }
 
 
@@ -115,7 +121,10 @@ void uc_restore_from_checkpoint(uc_engine *uc, current_run_state_t *current_run_
     if (err != UC_ERR_OK)
     {
         fprintf(stderr, "Unable to restore the stack %u: %s\n", err, uc_strerror(err));
-        my_exit(-1);
+        fflush(stderr);
+        current_run_state->fatal_error=true;
+        my_uc_emu_stop(uc);
+        return;
     }
 
      //RESTORE THE Main memory
@@ -126,7 +135,10 @@ void uc_restore_from_checkpoint(uc_engine *uc, current_run_state_t *current_run_
     if (err != UC_ERR_OK)
     {
         fprintf(stderr, "Unable to restore main memory %u: %s\n", err, uc_strerror(err));
-        my_exit(-1);
+        fflush(stderr);
+        current_run_state->fatal_error=true;
+        my_uc_emu_stop(uc);
+        return;
     }
 
     //RESTORE other memory
@@ -139,7 +151,10 @@ void uc_restore_from_checkpoint(uc_engine *uc, current_run_state_t *current_run_
         if (err != UC_ERR_OK)
         {
             fprintf(stderr,"Unable to restore other memory %u: %s\n", err, uc_strerror(err));
-            my_exit(-1);
+            fflush(stderr);
+            current_run_state->fatal_error=true;
+            my_uc_emu_stop(uc);
+            return;
         }
     }
 
@@ -413,6 +428,7 @@ void current_run_state_init(current_run_state_t* current_run_state)
     current_run_state->my_function_list.tail=0;
     current_run_state->restart=0;
     current_run_state->restart_address=0;
+    current_run_state->fatal_error=false;
     current_run_state->addresses_and_disassembly_from_file=0;
     current_run_state->addresses_and_disassembly_from_file_count=0;
 }
