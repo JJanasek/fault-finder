@@ -28,6 +28,10 @@ printinstructions: 	faultfinder
 urgh: 	DEBUG=-DPRINTINSTRUCTIONS -DDEBUG
 urgh: 	faultfinder
 
+asan:	CFLAGS += -fsanitize=address -fno-omit-frame-pointer
+asan:	LIBS += -lasan
+asan:	faultfinder
+
 $(OBJ_DIR)/%.o:	$(SHARED_DIR)/%.c
 		$(info ************ SHARED $@ ************)
 			mkdir -p $(dir $@)

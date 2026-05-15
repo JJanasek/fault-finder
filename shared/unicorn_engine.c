@@ -954,8 +954,10 @@ void uc_delete_all_hooks(uc_engine *uc,current_run_state_t* current_run_state)
     }
     // Remove the malloc'd spaced for the hard stops
     my_free(current_run_state->hk_hard_stops,"hk_hard_stops");
+    current_run_state->hk_hard_stops=NULL;
     // Remove the malloc'd spaced for the skips
     my_free(current_run_state->hk_skips,"hk_skips");
+    current_run_state->hk_skips=NULL;
 }
 
 

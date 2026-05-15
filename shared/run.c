@@ -855,6 +855,7 @@ void run_the_actual_fault( const char *code_buffer,const size_t code_buffer_size
 
     instruction_range_fault_t *current_instruction_range_fault=workload.instruction_range_fault;
     current_run_state->equivalence_count=0;
+    current_run_state->equivalences=NULL;
     
     if (current_instruction_range_fault != NULL)
     {
@@ -1028,12 +1029,15 @@ void run_the_actual_fault( const char *code_buffer,const size_t code_buffer_size
             #ifdef DEBUGs
                 printf_debug("Freeing equivalence lists: %lu\n",i);
             #endif
-            // Free the hashes 
+            for (uint32_t j=0; j<current_run_state->equivalences[i].fault_count; j++)
+            {
+                my_free(current_run_state->equivalences[i].faults[j].opcode_filter_fault,"equivalences opcode filter fault");
+            }
             my_free(current_run_state->equivalences[i].faults,"equivalences faults");
             my_free(current_run_state->equivalences[i].hashes,"equivalences hashes");
         }
         my_free(current_run_state->equivalences,"equivalences");
-        current_run_state->equivalences=0;
+        current_run_state->equivalences=NULL;
     }
 
 }

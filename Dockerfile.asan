@@ -1,0 +1,37 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    pkg-config \
+    libjson-c-dev \
+    libcapstone-dev \
+    libasan6 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir /root/.ssh/ && ssh-keyscan github.com >> /root/.ssh/known_hosts
+
+# Build Unicorn with AddressSanitizer
+RUN git clone --depth 1 --branch 2.1.1 https://github.com/unicorn-engine/unicorn.git && cd unicorn && \
+    mkdir build && cd build && \
+    cmake .. -DCMAKE_BUILD_TYPE=Debug \
+             -DCMAKE_C_FLAGS="-fsanitize=address -fno-omit-frame-pointer -g" \
+             -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=address" && \
+    make -j 4 && \
+    make install && ldconfig
+
+COPY shared /usr/src/faultfinder/shared
+COPY Makefile /usr/src/faultfinder/
+COPY finder /usr/src/faultfinder/finder
+
+WORKDIR /usr/src/faultfinder
+
+RUN make asan
+
+# Disable leak detection (too noisy), keep heap error detection
+ENV ASAN_OPTIONS="detect_leaks=0:halt_on_error=1:abort_on_error=1"
+
+ENTRYPOINT ["./faultfinder"]

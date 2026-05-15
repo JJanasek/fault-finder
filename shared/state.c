@@ -52,13 +52,13 @@ bool is_equivalent (uc_engine* uc,current_run_state_t* current_run_state)
             {
                 current_run_state->equivalences[i].faults=my_realloc(current_run_state->equivalences[i].faults,sizeof(fault_rule_t)*(fc+1),"equivalences faults");
             }
+            memcpy(&current_run_state->equivalences[i].faults[fc],&current_run_state->fault_rule,sizeof(fault_rule_t));
             if (current_run_state->fault_rule.opcode_filter_fault)
             {
                 uint64_t len=strlen(current_run_state->fault_rule.opcode_filter_fault)+1;
                 current_run_state->equivalences[i].faults[fc].opcode_filter_fault=my_malloc((sizeof(char)*(len+1)),"equivalences opcode filter fault");
                 strcpy(current_run_state->equivalences[i].faults[fc].opcode_filter_fault,current_run_state->fault_rule.opcode_filter_fault);
             }
-            memcpy(&current_run_state->equivalences[i].faults[fc],&current_run_state->fault_rule,sizeof(fault_rule_t));
             print_fault_rule(f,&current_run_state->equivalences[i].faults[fc]);
 
             current_run_state->equivalences[i].fault_count++;
@@ -88,6 +88,12 @@ bool is_equivalent (uc_engine* uc,current_run_state_t* current_run_state)
         current_run_state->equivalences[count].fault_count=1;
         current_run_state->equivalences[count].faults=my_malloc(sizeof(fault_rule_t),"equivalences faults");
         memcpy(current_run_state->equivalences[count].faults,&current_run_state->fault_rule,sizeof(fault_rule_t));
+        if (current_run_state->fault_rule.opcode_filter_fault)
+        {
+            uint64_t len=strlen(current_run_state->fault_rule.opcode_filter_fault)+1;
+            current_run_state->equivalences[count].faults->opcode_filter_fault=my_malloc((sizeof(char)*(len+1)),"equivalences opcode filter fault");
+            strcpy(current_run_state->equivalences[count].faults->opcode_filter_fault,current_run_state->fault_rule.opcode_filter_fault);
+        }
 
         // Increment the number of equivalences
         current_run_state->equivalence_count++;
